@@ -70,7 +70,18 @@ def transformer_ont(params):
 
 
 if __name__ == "__main__":
+    # train(params,x_train, y_train, x_test, y_test)
     from ParamsDetail import Params as params
     params = params['ModelParams']
+    model = transformer_ont(params)
 
-    train(params,x_train, y_train, x_test, y_test)
+    print("Loading weights")
+    model.load_weights("models/BestModel_HF.h5")
+        
+    data_path = "./test.csv"
+    data = pd.read_csv(data_path)
+    seq_column = 'sgRNA'
+    nts = data.loc[:, seq_column].apply(
+                    lambda seq: split_seqs(seq[0:23]))
+    x_test = np.array(nts)
+    y_pred = model.predict([x_test])
