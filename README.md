@@ -15,3 +15,8 @@ The required packages are:
 + pandas==1.1.5
 + viennarna==2.4.18
 + hyperopt==0.2.5
+
+## Tested demo with testsets
+`python PureNet.py`
+
+In addition, 
