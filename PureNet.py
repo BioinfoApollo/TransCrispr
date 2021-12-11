@@ -8,6 +8,7 @@ from tensorflow.keras.layers import Conv1D, AveragePooling1D
 from tensorflow.keras import Model, Input
 import tensorflow as tf
 import os
+from utils import *
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
@@ -76,12 +77,15 @@ if __name__ == "__main__":
     model = transformer_ont(params)
 
     print("Loading weights")
-    model.load_weights("models/BestModel_HF.h5")
+    model.load_weights("models/BestModel_xCas.h5")
         
-    data_path = "./test.csv"
+    data_path = "./testsets/test_xCas9.csv"
     data = pd.read_csv(data_path)
-    seq_column = 'sgRNA'
+    seq_column = 'Input_Sequence'
     nts = data.loc[:, seq_column].apply(
                     lambda seq: split_seqs(seq[0:23]))
     x_test = np.array(nts)
     y_pred = model.predict([x_test])
+
+    print(y_pred)
+
