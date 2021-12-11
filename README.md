@@ -19,4 +19,4 @@ The required packages are:
 ## Tested demo with testsets
 `python PureNet.py`
 
-In addition, 
+In addition, you can change the test data sets in folder [testsets](https://github.com/BioinfoApollo/TransCrispr_ONT/tree/main/testsets) and the corresponding test model weights in folder [models](https://github.com/BioinfoApollo/TransCrispr_ONT/tree/main/models)
