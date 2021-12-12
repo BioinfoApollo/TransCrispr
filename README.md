@@ -17,6 +17,9 @@ The required packages are:
 + hyperopt==0.2.5
 
 ## Tested demo with testsets
+1. Only sgRNA sequence composition
 `python PureNet.py`
+2. Combination of sequence feature and biological feature
+`python BioNet.py`
 
 In addition, you can change the test data sets in folder [testsets](https://github.com/BioinfoApollo/TransCrispr_ONT/tree/main/testsets) and the corresponding test model weights in folder [models](https://github.com/BioinfoApollo/TransCrispr_ONT/tree/main/models)
