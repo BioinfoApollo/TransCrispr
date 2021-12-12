@@ -2,7 +2,7 @@ ModelParams_WT = {
     'train_batch_size':20,
     'train_epochs_num':100,
     'train_base_learning_rate':0.00002,
-    'model_save_file':'./models/BestModel_WT.h5',
+    'model_save_file':'./models/BestModel_WT_withbio.h5',
     'dropout_rate':0.4,
     'nuc_embedding_outputdim':66,
     'conv1d_filters_size':7,
@@ -19,7 +19,7 @@ ModelParams_ESP = {
     'train_batch_size':20,
     'train_epochs_num':100,
     'train_base_learning_rate':0.00002,
-    'model_save_file':'./models/BestModel_ESP.h5',
+    'model_save_file':'./models/BestModel_ESP_withbio.h5',
     'dropout_rate':0.2,
     'nuc_embedding_outputdim':61,
     'conv1d_filters_size':6,
@@ -36,7 +36,7 @@ ModelParams_HF = {
     'train_batch_size':32,
     'train_epochs_num':100,
     'train_base_learning_rate':0.00002,
-    'model_save_file':'./models/BestModel_HF.h5',
+    'model_save_file':'./models/BestModel_HF_withbio.h5',
     'dropout_rate':0.4,
     'nuc_embedding_outputdim':95,
     'conv1d_filters_size':5,
@@ -120,8 +120,9 @@ ModelParams_HypaCas9 = {
 ParamsRanges = {
     'ModelParams_WT':
     {
-        'train_base_learning_rate':[0.00001,0.0001],
-        'dropout_rate':[0.1,0.5]
+        'dense1': [100, 200],
+        'dense2': [50, 100],
+        'dense3': [30, 50]
     },
     'ModelParams_ESP':
     {
@@ -162,6 +163,6 @@ ParamsRanges = {
 }
 
 Params = {
-    'ModelParams':ModelParams_HF,
+    'ModelParams':ModelParams_WT,
     'ParamsRanges':ParamsRanges
     }

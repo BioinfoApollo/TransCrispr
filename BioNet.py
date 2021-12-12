@@ -6,6 +6,11 @@ from tensorflow.keras.layers import Conv1D, AveragePooling1D
 from tensorflow.keras import Model, Input
 import tensorflow as tf
 import os
+import numpy as np
+import pandas as pd
+    
+from utils import *
+from sklearn import preprocessing
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
@@ -13,7 +18,7 @@ for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 
 
-def transformer_ont(params):
+def transformer_ont_biofeat(params):
     dropout_rate = params['dropout_rate']
     input = Input(shape=(83,))
     input_nuc = input[:, :24]
@@ -89,73 +94,26 @@ def transformer_ont(params):
     return model
 
 
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, Callback,LambdaCallback
-from tensorflow.keras.optimizers import *
-from hyperopt import STATUS_OK
-
-def train(params,train_input,train_label,test_input,test_label,issave=False):
-    result = Result()
-    m = transformer_ont(params)
-    batch_size = params['train_batch_size']
-    learningrate = params['train_base_learning_rate']
-    epochs = params['train_epochs_num']
-    m.compile(loss='mse', optimizer=Adam(lr=learningrate))
-
-    batch_end_callback = LambdaCallback(on_epoch_end=
-                                        lambda batch,logs:
-                                        print(get_score_at_test(m,test_input,result,test_label,
-                                                                issave=issave,savepath=params['model_save_file'])))
-
-    m.fit(train_input,train_label,
-          batch_size=batch_size,
-          epochs=epochs,
-          verbose=2,
-          validation_split=0.1,
-          callbacks=[batch_end_callback])
-    return {'loss': -1*result.Best, 'status': STATUS_OK}
-
 if __name__ == "__main__":
-    from ParamsDetail import Params as params
-    import numpy as np
-	import pandas as pd
-	from utils import *
-	from sklearn import preprocessing
-	params = params['ModelParams']
+    from ParamsDetail import Params as params 
+    params = params['ModelParams']
+    model = transformer_ont_biofeat(params)
 
-    crispr = pd.read_csv("./eSpCas9_withbiofeat.csv")
-	seq_column = 'Input_Sequence'
-	# Sequence encoding with dimer
-	nts = crispr.loc[:, seq_column].apply(
+    print("Loading weights for the models")
+    model.load_weights("models/BestModel_WT_withbio.h5")
+
+    data_path = "./testsets_withbiofeat/test_WT.csv"
+    data = pd.read_csv(data_path)
+    seq_column = 'Input_Sequence'
+    nts = data.loc[:, seq_column].apply(
 	                lambda seq: Dimer_split_seqs(seq[0:23]))
-	nts = np.array(nts)
-	# Biofeature
-	bio_feature = crispr.iloc[:,2:]
-	bio_feature = np.array(bio_feature)
-	bio_feature = preprocessing.scale(bio_feature)
+    nts = np.array(nts)
 
-	nts = np.concatenate((nts,bio_feature),axis=1)
+    bio_feature = data.iloc[:,2:]
+    bio_feature = np.array(bio_feature)
+    bio_feature = preprocessing.scale(bio_feature)
+	# print(bio_feature)
+    x_test = np.concatenate((nts,bio_feature),axis=1)
 
-	print(nts)
-	print(nts.shape)
-
-	y_column = 'Indel_Norm'
-	y = crispr[y_column]
-	y = np.array(y)
-	print(y.shape)
-
-	from sklearn.model_selection import train_test_split
-
-	random_state=40
-	test_size = 0.15
-
-	x_train, x_test, y_train, y_test = train_test_split(nts, y, test_size=test_size, random_state=random_state)
-	print("=" * 10 + "x_train" +"=" * 10)
-	print(x_train.shape)
-	print("=" * 10 + "x_test" +"=" * 10)
-	print(x_test.shape)
-	print("=" * 10 + "y_train" +"=" * 10)
-	print(y_train.shape)
-	print("=" * 10 + "y_test" +"=" * 10)
-	print(y_test.shape)
-
-    train(params,x_train, y_train, x_test, y_test)
+    y_pred = model.predict([x_test])
+    print(y_pred)
