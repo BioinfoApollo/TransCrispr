@@ -17,6 +17,8 @@ The required packages are:
 + hyperopt==0.2.5
 
 ## Tested demo with testsets
+**Note: network parameters of different variants are set in [ParamsDetail.py](https://github.com/BioinfoApollo/TransCrispr_ONT/blob/main/ParamsDetail.py), and corresponding parameters need to be changed in [ParamsDetail.py](https://github.com/BioinfoApollo/TransCrispr_ONT/blob/main/ParamsDetail.py) after the test dataset is replaced. The default network parameter is corresponding to dataset WT-SpCas9.**
+
 1. Only sgRNA sequence composition
 ```
 python PureNet.py
